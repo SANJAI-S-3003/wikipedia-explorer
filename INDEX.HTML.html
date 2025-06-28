@@ -1,0 +1,340 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <title>Wikipedia Explorer | Sanjai S</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <meta name="author" content="Sanjai S" />
+  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css" />
+  <style>
+    body {
+      font-family: 'Poppins', sans-serif;
+      background-color: #121212;
+      color: #f1f1f1;
+      padding: 20px;
+      transition: background 0.3s, color 0.3s;
+    }
+    .dark-mode {
+      /* Since dark mode is default, no changes here */
+    }
+    .main-container {
+      max-width: 900px;
+      margin: auto;
+      background-color: #1e1e1e;
+      border-radius: 20px;
+      padding: 30px;
+      box-shadow: 0 8px 30px rgba(0, 0, 0, 0.7);
+      color: inherit;
+      transition: background 0.3s, color 0.3s;
+    }
+    /* Light mode styles */
+    body.light-mode {
+      background: linear-gradient(to right, #f0f4f7, #ffffff);
+      color: #121212;
+    }
+    body.light-mode .main-container {
+      background-color: #fff;
+      color: #121212;
+      box-shadow: 0 8px 30px rgba(0,0,0,0.1);
+    }
+
+    .top-container {
+      text-align: center;
+      margin-bottom: 25px;
+      position: relative;
+    }
+    .top-container h1 {
+      font-weight: 600;
+      font-size: 28px;
+      color: #3399ff;
+      margin-bottom: 20px;
+    }
+    body.light-mode .top-container h1 {
+      color: #007bff;
+    }
+
+    .user-input {
+      padding: 14px 50px 14px 20px;
+      font-size: 16px;
+      width: 100%;
+      border: 2px solid #3399ff;
+      border-radius: 12px;
+      margin-bottom: 10px;
+      background-color: #2a2a2a;
+      color: #f1f1f1;
+      transition: background 0.3s, color 0.3s, border-color 0.3s;
+    }
+    body.light-mode .user-input {
+      background-color: #fff;
+      color: #121212;
+      border-color: #007bff;
+    }
+
+    .mic-btn {
+      position: absolute;
+      top: 50%;
+      right: 10px;
+      transform: translateY(-50%);
+      background: transparent;
+      border: none;
+      cursor: pointer;
+      font-size: 22px;
+      color: #3399ff;
+      outline: none;
+      transition: color 0.3s;
+    }
+    .mic-btn.listening {
+      color: #dc3545;
+      animation: pulse 1s infinite;
+    }
+    @keyframes pulse {
+      0% { transform: translateY(-50%) scale(1); }
+      50% { transform: translateY(-50%) scale(1.2); }
+      100% { transform: translateY(-50%) scale(1); }
+    }
+
+    .result-container {
+      margin-bottom: 20px;
+      padding: 20px;
+      background-color: #2a2a2a;
+      border-left: 5px solid #3399ff;
+      border-radius: 12px;
+      display: flex;
+      gap: 15px;
+      color: #ddd;
+      transition: background 0.3s, color 0.3s;
+    }
+    body.light-mode .result-container {
+      background-color: #f9f9f9;
+      color: #121212;
+      border-left-color: #007bff;
+    }
+    .result-image {
+      width: 80px;
+      height: 80px;
+      object-fit: cover;
+      border-radius: 10px;
+    }
+    .result-text {
+      flex: 1;
+    }
+    .title-result {
+      font-size: 18px;
+      font-weight: bold;
+      color: #3399ff;
+      text-decoration: none;
+    }
+    body.light-mode .title-result {
+      color: #007bff;
+    }
+    .title-result:hover {
+      text-decoration: underline;
+    }
+    .description-result {
+      font-size: 14px;
+      margin-top: 5px;
+      color: #ccc;
+    }
+    body.light-mode .description-result {
+      color: #333;
+    }
+
+    .btn-page {
+      margin: 5px;
+    }
+
+    .footer {
+      text-align: center;
+      margin-top: 30px;
+      color: #999;
+    }
+    body.light-mode .footer {
+      color: #666;
+    }
+  </style>
+</head>
+<body>
+  <div class="main-container">
+    <div class="top-container">
+      <h1>Wikipedia Explorer 🔍</h1>
+      <input
+        type="search"
+        id="userInput"
+        class="user-input"
+        placeholder="Search Wikipedia..."
+        aria-label="Search Wikipedia"
+      />
+      <button id="micBtn" class="mic-btn" title="Start voice search">🎤</button>
+      <button id="searchBtn" class="btn btn-primary mt-2">Search</button>
+      <button id="clearHistoryBtn" class="btn btn-outline-danger mt-2">Clear History</button>
+      <button id="toggleDarkMode" class="btn btn-outline-secondary mt-2">Light Mode</button>
+    </div>
+
+    <div id="searchResults"></div>
+    <div id="pagination" class="text-center"></div>
+    <div class="footer mt-4">2025 | Built by <strong>Sanjai S</strong></div>
+  </div>
+
+  <script>
+    const userInput = document.getElementById("userInput");
+    const searchBtn = document.getElementById("searchBtn");
+    const searchResults = document.getElementById("searchResults");
+    const pagination = document.getElementById("pagination");
+    const clearHistoryBtn = document.getElementById("clearHistoryBtn");
+    const toggleDarkModeBtn = document.getElementById("toggleDarkMode");
+    const micBtn = document.getElementById("micBtn");
+
+    let currentResults = [];
+    let currentPage = 1;
+    const resultsPerPage = 5;
+
+    // Since dark mode is default, toggle button text starts with "Light Mode"
+    toggleDarkModeBtn.addEventListener("click", () => {
+      if (document.body.classList.contains("light-mode")) {
+        // Switch to dark mode
+        document.body.classList.remove("light-mode");
+        toggleDarkModeBtn.textContent = "Light Mode";
+      } else {
+        // Switch to light mode
+        document.body.classList.add("light-mode");
+        toggleDarkModeBtn.textContent = "Dark Mode";
+      }
+    });
+
+    function displayPage(page) {
+      currentPage = page;
+      const start = (page - 1) * resultsPerPage;
+      const end = start + resultsPerPage;
+      const resultsToDisplay = currentResults.slice(start, end);
+
+      searchResults.innerHTML = "";
+      resultsToDisplay.forEach((result) => {
+        const container = document.createElement("div");
+        container.className = "result-container";
+
+        const img = document.createElement("img");
+        img.className = "result-image";
+        img.src =
+          result.thumbnailUrl ||
+          "https://upload.wikimedia.org/wikipedia/commons/6/63/Wikipedia-logo.png";
+
+        const textDiv = document.createElement("div");
+        textDiv.className = "result-text";
+        textDiv.innerHTML = `<a href="${result.link}" target="_blank" class="title-result">${result.title}</a>
+                             <p class="description-result">${result.description}</p>`;
+
+        container.appendChild(img);
+        container.appendChild(textDiv);
+        searchResults.appendChild(container);
+      });
+
+      renderPagination();
+    }
+
+    function renderPagination() {
+      const totalPages = Math.ceil(currentResults.length / resultsPerPage);
+      pagination.innerHTML = "";
+
+      for (let i = 1; i <= totalPages; i++) {
+        const btn = document.createElement("button");
+        btn.textContent = i;
+        btn.className = "btn btn-outline-primary btn-page";
+        if (i === currentPage) btn.classList.add("active");
+        btn.onclick = () => displayPage(i);
+        pagination.appendChild(btn);
+      }
+    }
+
+    function searchWikipedia() {
+      const query = userInput.value.trim();
+      if (!query) return alert("Please enter a search term");
+
+      fetch(`https://apis.ccbp.in/wiki-search?search=${encodeURIComponent(query)}`)
+        .then((res) => res.json())
+        .then((data) => {
+          currentResults = data.search_results.map((item) => ({
+            title: item.title,
+            link: item.link,
+            description: item.description,
+            thumbnailUrl: item.imageUrl || null,
+          }));
+
+          displayPage(1);
+          saveSearch(query);
+        })
+        .catch(() => {
+          searchResults.innerHTML =
+            '<p class="text-danger text-center">Error fetching results.</p>';
+        });
+    }
+
+    function saveSearch(query) {
+      let history = JSON.parse(localStorage.getItem("searchHistory") || "[]");
+      if (!history.includes(query)) {
+        history.unshift(query);
+        if (history.length > 5) history.pop();
+        localStorage.setItem("searchHistory", JSON.stringify(history));
+      }
+    }
+
+    clearHistoryBtn.addEventListener("click", () => {
+      localStorage.removeItem("searchHistory");
+      alert("Search history cleared.");
+    });
+
+    searchBtn.addEventListener("click", searchWikipedia);
+    userInput.addEventListener("keydown", (e) => {
+      if (e.key === "Enter") searchWikipedia();
+    });
+
+    // Voice Search Integration
+    let recognition;
+    if ("webkitSpeechRecognition" in window) {
+      recognition = new webkitSpeechRecognition();
+    } else if ("SpeechRecognition" in window) {
+      recognition = new SpeechRecognition();
+    } else {
+      recognition = null;
+      micBtn.style.display = "none"; // Hide mic button if not supported
+    }
+
+    if (recognition) {
+      recognition.continuous = false;
+      recognition.interimResults = false;
+      recognition.lang = "en-US";
+
+      micBtn.addEventListener("click", () => {
+        if (micBtn.classList.contains("listening")) {
+          recognition.stop();
+          micBtn.classList.remove("listening");
+        } else {
+          recognition.start();
+          micBtn.classList.add("listening");
+        }
+      });
+
+      recognition.onresult = (event) => {
+        const transcript = event.results[0][0].transcript;
+        userInput.value = transcript;
+        micBtn.classList.remove("listening");
+        searchWikipedia();
+      };
+
+      recognition.onerror = (event) => {
+        console.error("Speech recognition error", event.error);
+        micBtn.classList.remove("listening");
+        alert("Voice recognition error, please try again.");
+      };
+
+      recognition.onend = () => {
+        micBtn.classList.remove("listening");
+      };
+    }
+
+    window.addEventListener("offline", () => {
+      alert("You're offline. Please check your connection.");
+    });
+  </script>
+</body>
+</html>
