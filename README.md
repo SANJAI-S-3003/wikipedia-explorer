@@ -19,8 +19,7 @@ Wikipedia Explorer lets you search Wikipedia articles quickly and easily with:
 ## Demo
 
 View the live demo here:  
-`https://your-username.github.io/wikipedia-explorer/`  
-*(Replace with your actual GitHub Pages URL)*
+`https://SANJAI-S-3003.github.io/wikipedia-explorer/`
 
 ---
 
@@ -76,7 +75,9 @@ This project is open source and free to use.
 
 ## Contact
 
-Feel free to reach out on [GitHub](https://github.com/your-username) or [LinkedIn](https://linkedin.com/in/your-linkedin) for feedback or collaboration.
+Feel free to reach out for feedback or collaboration:
+
+- LinkedIn: [www.linkedin.com/in/sanjai-s3003](https://www.linkedin.com/in/sanjai-s3003)  
+- GitHub: [https://github.com/SANJAI-S-3003](https://github.com/SANJAI-S-3003)
 
 ---
-
