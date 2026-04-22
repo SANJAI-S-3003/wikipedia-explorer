@@ -5,336 +5,693 @@
   <title>Wikipedia Explorer | Sanjai S</title>
   <meta name="viewport" content="width=device-width, initial-scale=1" />
   <meta name="author" content="Sanjai S" />
-  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600&display=swap" rel="stylesheet" />
+  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700&display=swap" rel="stylesheet" />
   <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css" />
   <style>
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+
     body {
       font-family: 'Poppins', sans-serif;
-      background-color: #121212;
+      background-color: #0f0f13;
       color: #f1f1f1;
       padding: 20px;
       transition: background 0.3s, color 0.3s;
+      min-height: 100vh;
     }
-    .dark-mode {
-      /* Since dark mode is default, no changes here */
+    body.light-mode {
+      background: linear-gradient(135deg, #e8edf5, #f7f9fc);
+      color: #121212;
     }
+
     .main-container {
-      max-width: 900px;
-      margin: auto;
-      background-color: #1e1e1e;
-      border-radius: 20px;
-      padding: 30px;
-      box-shadow: 0 8px 30px rgba(0, 0, 0, 0.7);
-      color: inherit;
+      max-width: 900px; margin: auto;
+      background-color: #1a1a24;
+      border-radius: 20px; padding: 35px 30px;
+      box-shadow: 0 8px 40px rgba(0,0,0,0.6);
       transition: background 0.3s, color 0.3s;
     }
-    /* Light mode styles */
-    body.light-mode {
-      background: linear-gradient(to right, #f0f4f7, #ffffff);
-      color: #121212;
-    }
     body.light-mode .main-container {
-      background-color: #fff;
-      color: #121212;
+      background-color: #ffffff; color: #121212;
       box-shadow: 0 8px 30px rgba(0,0,0,0.1);
     }
 
-    .top-container {
-      text-align: center;
-      margin-bottom: 25px;
-      position: relative;
-    }
+    /* HEADER */
+    .top-container { text-align: center; margin-bottom: 28px; }
     .top-container h1 {
-      font-weight: 600;
-      font-size: 28px;
-      color: #3399ff;
-      margin-bottom: 20px;
+      font-weight: 700; font-size: 30px;
+      color: #4a9eff; margin-bottom: 4px; letter-spacing: -0.5px;
     }
-    body.light-mode .top-container h1 {
-      color: #007bff;
-    }
+    body.light-mode .top-container h1 { color: #1a6edc; }
+    .subtitle { font-size: 13px; color: #888; margin-bottom: 22px; }
 
+    /* SEARCH */
+    .search-wrapper { position: relative; margin-bottom: 12px; }
     .user-input {
-      padding: 14px 50px 14px 20px;
-      font-size: 16px;
-      width: 100%;
-      border: 2px solid #3399ff;
-      border-radius: 12px;
-      margin-bottom: 10px;
-      background-color: #2a2a2a;
-      color: #f1f1f1;
-      transition: background 0.3s, color 0.3s, border-color 0.3s;
+      padding: 14px 50px 14px 18px; font-size: 15px; width: 100%;
+      border: 2px solid #2e3150; border-radius: 12px;
+      background-color: #252535; color: #f1f1f1;
+      font-family: 'Poppins', sans-serif; outline: none;
+      transition: border-color 0.3s, box-shadow 0.3s;
     }
-    body.light-mode .user-input {
-      background-color: #fff;
-      color: #121212;
-      border-color: #007bff;
-    }
+    .user-input:focus { border-color: #4a9eff; box-shadow: 0 0 0 3px rgba(74,158,255,0.15); }
+    body.light-mode .user-input { background-color: #f4f6fb; color: #121212; border-color: #c5d0e8; }
+    body.light-mode .user-input:focus { border-color: #1a6edc; box-shadow: 0 0 0 3px rgba(26,110,220,0.12); }
+    .user-input::placeholder { color: #666; }
 
     .mic-btn {
-      position: absolute;
-      top: 50%;
-      right: 10px;
+      position: absolute; top: 50%; right: 14px;
       transform: translateY(-50%);
-      background: transparent;
-      border: none;
-      cursor: pointer;
-      font-size: 22px;
-      color: #3399ff;
-      outline: none;
-      transition: color 0.3s;
+      background: transparent; border: none; cursor: pointer;
+      font-size: 20px; color: #4a9eff; outline: none; padding: 0;
+      transition: color 0.3s, transform 0.2s;
     }
-    .mic-btn.listening {
-      color: #dc3545;
-      animation: pulse 1s infinite;
-    }
+    .mic-btn:hover { transform: translateY(-50%) scale(1.1); }
+    .mic-btn.listening { color: #ff4d6d; animation: pulse 1s infinite; }
     @keyframes pulse {
-      0% { transform: translateY(-50%) scale(1); }
-      50% { transform: translateY(-50%) scale(1.2); }
-      100% { transform: translateY(-50%) scale(1); }
+      0%,100% { transform: translateY(-50%) scale(1); }
+      50%      { transform: translateY(-50%) scale(1.25); }
     }
 
+    /* BUTTONS */
+    .btn-row {
+      display: flex; gap: 10px;
+      flex-wrap: wrap; justify-content: center; margin-bottom: 12px;
+    }
+    .btn-search {
+      background: linear-gradient(135deg, #4a9eff, #7b5ea7);
+      border: none; color: #fff; font-weight: 600;
+      padding: 10px 28px; border-radius: 10px;
+      font-family: 'Poppins', sans-serif; font-size: 14px;
+      cursor: pointer; transition: opacity 0.2s, transform 0.2s;
+    }
+    .btn-search:hover { opacity: 0.88; transform: translateY(-1px); }
+
+    /* CHIPS */
+    .filter-row {
+      display: flex; gap: 8px; justify-content: center;
+      flex-wrap: wrap; margin-bottom: 20px;
+    }
+    .chip {
+      background: #252535; border: 1px solid #2e3150; color: #999;
+      font-size: 12px; font-weight: 500; padding: 5px 14px;
+      border-radius: 20px; cursor: pointer;
+      font-family: 'Poppins', sans-serif; transition: all 0.2s;
+    }
+    .chip:hover, .chip.active {
+      background: rgba(74,158,255,0.15); border-color: #4a9eff; color: #4a9eff;
+    }
+    body.light-mode .chip { background: #f0f4fb; border-color: #d0d8ec; color: #666; }
+    body.light-mode .chip.active,
+    body.light-mode .chip:hover { background: rgba(26,110,220,0.1); border-color: #1a6edc; color: #1a6edc; }
+
+    /* HISTORY */
+    .history-wrap { display: none; margin-bottom: 18px; }
+    .history-wrap.show { display: block; }
+    .history-label { font-size: 12px; color: #888; margin-bottom: 8px; }
+    .history-chips { display: flex; gap: 7px; flex-wrap: wrap; }
+    .history-chip {
+      background: #1e1e2e; border: 1px solid #2e3150; color: #aaa;
+      font-size: 12px; padding: 4px 12px; border-radius: 20px;
+      cursor: pointer; font-family: 'Poppins', sans-serif; transition: all 0.2s;
+    }
+    .history-chip:hover { border-color: #4a9eff; color: #4a9eff; }
+    body.light-mode .history-chip { background: #f0f4fb; border-color: #d0d8ec; color: #666; }
+
+    /* STATUS BAR */
+    .status-bar {
+      display: none; justify-content: space-between;
+      align-items: center; margin-bottom: 16px; font-size: 13px; color: #888;
+    }
+    .status-bar.show { display: flex; }
+    .status-bar strong { color: #f1f1f1; }
+    body.light-mode .status-bar strong { color: #121212; }
+    .sort-select {
+      background: #252535; border: 1px solid #2e3150;
+      color: #f1f1f1; font-size: 12px; padding: 5px 10px;
+      border-radius: 8px; outline: none;
+      font-family: 'Poppins', sans-serif; cursor: pointer;
+    }
+    body.light-mode .sort-select { background: #f0f4fb; border-color: #d0d8ec; color: #121212; }
+
+    /* LOADER */
+    .loader { display: none; text-align: center; padding: 40px; }
+    .loader.show { display: block; }
+    .spinner {
+      width: 40px; height: 40px;
+      border: 3px solid #2e3150; border-top-color: #4a9eff;
+      border-radius: 50%; animation: spin 0.7s linear infinite;
+      margin: 0 auto 12px;
+    }
+    @keyframes spin { to { transform: rotate(360deg); } }
+    .loader p { color: #888; font-size: 13px; }
+
+    /* EMPTY */
+    .empty-state { display: none; text-align: center; padding: 50px 20px; }
+    .empty-state.show { display: block; }
+    .empty-state .icon { font-size: 2.8rem; margin-bottom: 10px; }
+    .empty-state h5 { font-weight: 600; margin-bottom: 6px; }
+    .empty-state p { color: #888; font-size: 13px; }
+
+    /* RESULT CARDS */
     .result-container {
-      margin-bottom: 20px;
-      padding: 20px;
-      background-color: #2a2a2a;
-      border-left: 5px solid #3399ff;
-      border-radius: 12px;
-      display: flex;
-      gap: 15px;
-      color: #ddd;
-      transition: background 0.3s, color 0.3s;
+      margin-bottom: 16px; padding: 18px;
+      background-color: #21212e; border-left: 4px solid #4a9eff;
+      border-radius: 14px; display: flex; gap: 15px;
+      align-items: flex-start; color: #ddd;
+      transition: background 0.2s, transform 0.2s, box-shadow 0.2s;
+      animation: fadeUp 0.35s ease both; cursor: pointer;
+    }
+    .result-container:hover {
+      background-color: #28283a; transform: translateY(-2px);
+      box-shadow: 0 6px 20px rgba(74,158,255,0.1);
+    }
+    @keyframes fadeUp {
+      from { opacity:0; transform: translateY(14px); }
+      to   { opacity:1; transform: translateY(0); }
     }
     body.light-mode .result-container {
-      background-color: #f9f9f9;
-      color: #121212;
-      border-left-color: #007bff;
+      background-color: #f4f7fd; color: #222; border-left-color: #1a6edc;
     }
+    body.light-mode .result-container:hover { background-color: #eaf0fb; }
+
     .result-image {
-      width: 80px;
-      height: 80px;
-      object-fit: cover;
-      border-radius: 10px;
+      width: 85px; height: 85px; object-fit: cover;
+      border-radius: 10px; flex-shrink: 0; background: #2e3150;
     }
-    .result-text {
-      flex: 1;
-    }
+    .result-text { flex: 1; min-width: 0; }
     .title-result {
-      font-size: 18px;
-      font-weight: bold;
-      color: #3399ff;
-      text-decoration: none;
+      font-size: 16px; font-weight: 600; color: #4a9eff;
+      text-decoration: none; display: block; margin-bottom: 5px;
     }
-    body.light-mode .title-result {
-      color: #007bff;
-    }
-    .title-result:hover {
-      text-decoration: underline;
-    }
+    body.light-mode .title-result { color: #1a6edc; }
+    .title-result:hover { text-decoration: underline; }
     .description-result {
-      font-size: 14px;
-      margin-top: 5px;
-      color: #ccc;
+      font-size: 13px; color: #aaa; line-height: 1.55;
+      display: -webkit-box; -webkit-line-clamp: 3;
+      -webkit-box-orient: vertical; overflow: hidden;
     }
-    body.light-mode .description-result {
-      color: #333;
+    body.light-mode .description-result { color: #555; }
+    .card-footer-row {
+      display: flex; align-items: center;
+      justify-content: space-between; margin-top: 8px;
     }
+    .read-more-btn {
+      background: transparent; border: 1px solid #2e3150; color: #888;
+      font-size: 11px; padding: 3px 10px; border-radius: 6px;
+      cursor: pointer; font-family: 'Poppins', sans-serif; transition: all 0.2s;
+    }
+    .read-more-btn:hover { border-color: #4a9eff; color: #4a9eff; }
 
+    /* PAGINATION */
+    #pagination { text-align: center; margin-top: 20px; }
     .btn-page {
-      margin: 5px;
+      margin: 4px; border-radius: 8px !important;
+      font-size: 13px; font-family: 'Poppins', sans-serif; padding: 6px 14px;
     }
 
-    .footer {
-      text-align: center;
-      margin-top: 30px;
-      color: #999;
+    /* MODAL */
+    .modal-overlay {
+      display: none; position: fixed; inset: 0;
+      background: rgba(0,0,0,0.75); backdrop-filter: blur(4px);
+      z-index: 999; align-items: center; justify-content: center; padding: 20px;
     }
-    body.light-mode .footer {
-      color: #666;
+    .modal-overlay.open { display: flex; }
+    .modal-box {
+      background: #1a1a24; border: 1px solid #2e3150;
+      border-radius: 18px; max-width: 640px; width: 100%;
+      max-height: 82vh; overflow-y: auto; animation: popIn 0.3s ease;
+    }
+    body.light-mode .modal-box { background: #fff; border-color: #d0d8ec; }
+    @keyframes popIn {
+      from { opacity:0; transform: scale(0.92) translateY(16px); }
+      to   { opacity:1; transform: scale(1) translateY(0); }
+    }
+    .modal-head {
+      position: sticky; top: 0; background: #1a1a24;
+      border-bottom: 1px solid #2e3150; padding: 16px 18px;
+      display: flex; align-items: center; justify-content: space-between;
+    }
+    body.light-mode .modal-head { background: #fff; border-color: #e0e6f0; }
+    .modal-head h5 { font-size: 15px; font-weight: 600; margin: 0; flex:1; padding-right:10px; }
+    .modal-close-btn {
+      background: #252535; border: 1px solid #2e3150; color: #aaa;
+      width: 30px; height: 30px; min-width:30px; border-radius: 50%;
+      cursor: pointer; font-size: 14px;
+      display: grid; place-items: center; transition: all 0.2s;
+    }
+    .modal-close-btn:hover { border-color: #ff4d6d; color: #ff4d6d; }
+    .modal-body-content { padding: 18px; }
+    .modal-img {
+      width: 100%; border-radius: 10px;
+      margin-bottom: 14px; max-height: 240px; object-fit: cover;
+    }
+    .modal-extract { font-size: 13px; line-height: 1.8; color: #bbb; }
+    body.light-mode .modal-extract { color: #444; }
+    .modal-actions { display: flex; gap: 10px; margin-top: 16px; flex-wrap: wrap; }
+
+    /* TOAST */
+    .toast-msg {
+      position: fixed; bottom: 20px; right: 20px;
+      background: #21212e; border: 1px solid #2e3150; color: #f1f1f1;
+      padding: 10px 16px; border-radius: 10px; font-size: 13px;
+      z-index: 9999; opacity: 0; transform: translateY(20px);
+      transition: all 0.3s; pointer-events: none;
+    }
+    .toast-msg.show { opacity: 1; transform: translateY(0); }
+
+    /* FOOTER */
+    .footer { text-align: center; margin-top: 30px; color: #555; font-size: 13px; }
+    body.light-mode .footer { color: #999; }
+
+    @media (max-width: 480px) {
+      .main-container { padding: 20px 16px; }
+      .result-container { flex-direction: column; }
+      .result-image { width: 100%; height: 140px; }
+      .btn-row { flex-direction: column; align-items: stretch; }
     }
   </style>
 </head>
 <body>
-  <div class="main-container">
-    <div class="top-container">
-      <h1>Wikipedia Explorer 🔍</h1>
+<div class="main-container">
+
+  <!-- HEADER -->
+  <div class="top-container">
+    <h1>Wikipedia Explorer 🔍</h1>
+    <p class="subtitle">Search millions of articles — powered by Wikipedia</p>
+
+    <div class="search-wrapper">
       <input
-        type="search"
-        id="userInput"
-        class="user-input"
-        placeholder="Search Wikipedia..."
-        aria-label="Search Wikipedia"
+        type="search" id="userInput" class="user-input"
+        placeholder="Search Wikipedia... e.g. Black Holes, Python, Taj Mahal"
+        aria-label="Search Wikipedia" autocomplete="off"
       />
-      <button id="micBtn" class="mic-btn" title="Start voice search">🎤</button>
-      <button id="searchBtn" class="btn btn-primary mt-2">Search</button>
-      <button id="clearHistoryBtn" class="btn btn-outline-danger mt-2">Clear History</button>
-      <button id="toggleDarkMode" class="btn btn-outline-secondary mt-2">Light Mode</button>
+      <button id="micBtn" class="mic-btn" title="Voice search">🎤</button>
     </div>
 
-    <div id="searchResults"></div>
-    <div id="pagination" class="text-center"></div>
-    <div class="footer mt-4">2025 | Built by <strong>Sanjai S</strong></div>
+    <div class="btn-row">
+      <button id="searchBtn" class="btn-search">🔍 Search</button>
+      <button id="clearHistoryBtn" class="btn btn-outline-danger"
+        style="font-size:13px;padding:9px 18px;border-radius:10px;">Clear History</button>
+      <button id="toggleDarkMode" class="btn btn-outline-secondary"
+        style="font-size:13px;padding:9px 18px;border-radius:10px;">☀️ Light Mode</button>
+    </div>
+
+    <div class="filter-row">
+      <span class="chip active" data-limit="5">5 Results</span>
+      <span class="chip" data-limit="10">10 Results</span>
+      <span class="chip" data-limit="20">20 Results</span>
+    </div>
   </div>
 
-  <script>
-    const userInput = document.getElementById("userInput");
-    const searchBtn = document.getElementById("searchBtn");
-    const searchResults = document.getElementById("searchResults");
-    const pagination = document.getElementById("pagination");
-    const clearHistoryBtn = document.getElementById("clearHistoryBtn");
-    const toggleDarkModeBtn = document.getElementById("toggleDarkMode");
-    const micBtn = document.getElementById("micBtn");
+  <!-- HISTORY -->
+  <div class="history-wrap" id="historyWrap">
+    <div class="history-label">🕓 Recent searches:</div>
+    <div class="history-chips" id="historyChips"></div>
+  </div>
 
-    let currentResults = [];
-    let currentPage = 1;
-    const resultsPerPage = 5;
+  <!-- STATUS -->
+  <div class="status-bar" id="statusBar">
+    <span id="resultCount"></span>
+    <select class="sort-select" id="sortSelect">
+      <option value="default">Sort: Relevance</option>
+      <option value="az">A → Z</option>
+      <option value="za">Z → A</option>
+    </select>
+  </div>
 
-    // Since dark mode is default, toggle button text starts with "Light Mode"
-    toggleDarkModeBtn.addEventListener("click", () => {
-      if (document.body.classList.contains("light-mode")) {
-        // Switch to dark mode
-        document.body.classList.remove("light-mode");
-        toggleDarkModeBtn.textContent = "Light Mode";
+  <!-- LOADER -->
+  <div class="loader" id="loader">
+    <div class="spinner"></div>
+    <p>Searching Wikipedia…</p>
+  </div>
+
+  <!-- EMPTY -->
+  <div class="empty-state" id="emptyState">
+    <div class="icon">🌐</div>
+    <h5>No results found</h5>
+    <p>Try different keywords or check your spelling.</p>
+  </div>
+
+  <!-- RESULTS -->
+  <div id="searchResults"></div>
+  <div id="pagination"></div>
+
+  <div class="footer mt-4">2025 | Built by <strong>Sanjai S</strong></div>
+</div>
+
+<!-- MODAL -->
+<div class="modal-overlay" id="modalOverlay">
+  <div class="modal-box">
+    <div class="modal-head">
+      <h5 id="modalTitle">—</h5>
+      <button class="modal-close-btn" id="modalClose">✕</button>
+    </div>
+    <div class="modal-body-content" id="modalBodyContent"></div>
+  </div>
+</div>
+
+<!-- TOAST -->
+<div class="toast-msg" id="toast"></div>
+
+<script>
+  /* ── ELEMENTS ── */
+  const userInput       = document.getElementById("userInput");
+  const searchBtn       = document.getElementById("searchBtn");
+  const searchResults   = document.getElementById("searchResults");
+  const paginationEl    = document.getElementById("pagination");
+  const clearHistoryBtn = document.getElementById("clearHistoryBtn");
+  const toggleDarkBtn   = document.getElementById("toggleDarkMode");
+  const micBtn          = document.getElementById("micBtn");
+  const statusBar       = document.getElementById("statusBar");
+  const resultCount     = document.getElementById("resultCount");
+  const sortSelect      = document.getElementById("sortSelect");
+  const loader          = document.getElementById("loader");
+  const emptyState      = document.getElementById("emptyState");
+  const historyWrap     = document.getElementById("historyWrap");
+  const historyChips    = document.getElementById("historyChips");
+  const modalOverlay    = document.getElementById("modalOverlay");
+  const modalTitle      = document.getElementById("modalTitle");
+  const modalBodyContent= document.getElementById("modalBodyContent");
+  const modalClose      = document.getElementById("modalClose");
+  const toast           = document.getElementById("toast");
+
+  /* ── STATE ── */
+  let allResults     = [];
+  let currentResults = [];
+  let currentPage    = 1;
+  let resultsPerPage = 5;
+
+  /* ── TOAST ── */
+  function showToast(msg) {
+    toast.textContent = msg;
+    toast.classList.add("show");
+    setTimeout(() => toast.classList.remove("show"), 2600);
+  }
+
+  /* ── DARK/LIGHT MODE ── */
+  toggleDarkBtn.addEventListener("click", () => {
+    document.body.classList.toggle("light-mode");
+    toggleDarkBtn.textContent = document.body.classList.contains("light-mode")
+      ? "🌙 Dark Mode" : "☀️ Light Mode";
+  });
+
+  /* ── FILTER CHIPS ── */
+  document.querySelectorAll(".chip").forEach(chip => {
+    chip.addEventListener("click", () => {
+      document.querySelectorAll(".chip").forEach(c => c.classList.remove("active"));
+      chip.classList.add("active");
+      resultsPerPage = parseInt(chip.dataset.limit);
+      if (currentResults.length) displayPage(1);
+    });
+  });
+
+  /* ── SORT ── */
+  sortSelect.addEventListener("change", () => {
+    const val = sortSelect.value;
+    currentResults = [...allResults];
+    if (val === "az") currentResults.sort((a,b) => a.title.localeCompare(b.title));
+    if (val === "za") currentResults.sort((a,b) => b.title.localeCompare(a.title));
+    displayPage(1);
+  });
+
+  /* ── HISTORY ── */
+  function loadHistory() {
+    const history = JSON.parse(localStorage.getItem("wikiHistory") || "[]");
+    if (!history.length) { historyWrap.classList.remove("show"); return; }
+    historyWrap.classList.add("show");
+    historyChips.innerHTML = "";
+    history.forEach(q => {
+      const chip = document.createElement("span");
+      chip.className = "history-chip";
+      chip.textContent = q;
+      chip.addEventListener("click", () => { userInput.value = q; searchWikipedia(); });
+      historyChips.appendChild(chip);
+    });
+  }
+
+  function saveSearch(query) {
+    let history = JSON.parse(localStorage.getItem("wikiHistory") || "[]");
+    history = history.filter(h => h !== query);
+    history.unshift(query);
+    if (history.length > 6) history.pop();
+    localStorage.setItem("wikiHistory", JSON.stringify(history));
+    loadHistory();
+  }
+
+  clearHistoryBtn.addEventListener("click", () => {
+    localStorage.removeItem("wikiHistory");
+    historyWrap.classList.remove("show");
+    showToast("🗑️ History cleared.");
+  });
+
+  /* ─────────────────────────────────────────────
+     MAIN SEARCH — Official Wikipedia API
+     Two-step:
+       1. opensearch  → get titles + links
+       2. query/prop  → get extracts + thumbnails
+  ───────────────────────────────────────────── */
+  async function searchWikipedia() {
+    const query = userInput.value.trim();
+    if (!query) { showToast("Please enter a search term!"); return; }
+
+    // Reset UI
+    searchResults.innerHTML = "";
+    paginationEl.innerHTML  = "";
+    emptyState.classList.remove("show");
+    statusBar.classList.remove("show");
+    loader.classList.add("show");
+
+    const t0 = performance.now();
+
+    try {
+      /* STEP 1 — opensearch: get matching titles */
+      const searchRes = await fetch(
+        `https://en.wikipedia.org/w/api.php?action=opensearch&search=${encodeURIComponent(query)}&limit=30&namespace=0&format=json&origin=*`
+      );
+      const [, titles, descriptions, links] = await searchRes.json();
+      // opensearch returns [query, titles[], descriptions[], urls[]]
+
+      if (!titles.length) {
+        loader.classList.remove("show");
+        emptyState.classList.add("show");
+        return;
+      }
+
+      /* STEP 2 — query: get extracts + thumbnails for all titles at once */
+      const titlesParam = titles.map(t => encodeURIComponent(t)).join("|");
+      const detailRes = await fetch(
+        `https://en.wikipedia.org/w/api.php?action=query&titles=${titlesParam}&prop=extracts|pageimages&exintro=true&explaintext=true&pithumbsize=300&format=json&origin=*`
+      );
+      const detailData = await detailRes.json();
+      const pages = detailData.query.pages;
+
+      // Build a lookup: title → { extract, thumbnail }
+      const detailMap = {};
+      Object.values(pages).forEach(p => {
+        detailMap[p.title] = {
+          extract:   p.extract || "",
+          thumbnail: p.thumbnail ? p.thumbnail.source : null
+        };
+      });
+
+      // Assemble final results preserving opensearch order
+      allResults = titles.map((title, i) => ({
+        title,
+        link:        links[i],
+        description: detailMap[title]?.extract || descriptions[i] || "No description available.",
+        thumbnailUrl: detailMap[title]?.thumbnail || null
+      }));
+
+      currentResults = [...allResults];
+
+      const elapsed = Math.round(performance.now() - t0);
+      statusBar.classList.add("show");
+      resultCount.innerHTML = `<strong>${currentResults.length}</strong> results — fetched in <strong>${elapsed}ms</strong>`;
+      sortSelect.value = "default";
+      saveSearch(query);
+      displayPage(1);
+
+    } catch (err) {
+      console.error(err);
+      showToast("⚠️ Error fetching results. Check your connection.");
+    }
+
+    loader.classList.remove("show");
+  }
+
+  searchBtn.addEventListener("click", searchWikipedia);
+  userInput.addEventListener("keydown", e => { if (e.key === "Enter") searchWikipedia(); });
+
+  /* ── DISPLAY PAGE ── */
+  function displayPage(page) {
+    currentPage = page;
+    const start = (page - 1) * resultsPerPage;
+    const slice = currentResults.slice(start, start + resultsPerPage);
+
+    searchResults.innerHTML = "";
+
+    slice.forEach((result, i) => {
+      const card = document.createElement("div");
+      card.className = "result-container";
+      card.style.animationDelay = `${i * 60}ms`;
+
+      // Thumbnail
+      const img = document.createElement("img");
+      img.className = "result-image";
+      img.src       = result.thumbnailUrl || "https://upload.wikimedia.org/wikipedia/commons/thumb/8/80/Wikipedia-logo-v2.svg/200px-Wikipedia-logo-v2.svg.png";
+      img.alt       = result.title;
+      img.loading   = "lazy";
+      img.onerror   = () => {
+        img.src = "https://upload.wikimedia.org/wikipedia/commons/thumb/8/80/Wikipedia-logo-v2.svg/200px-Wikipedia-logo-v2.svg.png";
+      };
+
+      // Text
+      const textDiv = document.createElement("div");
+      textDiv.className = "result-text";
+
+      // Truncate description to ~180 chars for card
+      const shortDesc = result.description.length > 180
+        ? result.description.slice(0, 180).trim() + "…"
+        : result.description;
+
+      textDiv.innerHTML = `
+        <a href="${result.link}" target="_blank" rel="noopener" class="title-result"
+           onclick="event.stopPropagation()">${result.title}</a>
+        <p class="description-result">${shortDesc}</p>
+        <div class="card-footer-row">
+          <span style="font-size:11px;color:#666;">↗ en.wikipedia.org</span>
+          <button class="read-more-btn">Read More</button>
+        </div>
+      `;
+
+      textDiv.querySelector(".read-more-btn").addEventListener("click", e => {
+        e.stopPropagation(); openModal(result);
+      });
+
+      card.appendChild(img);
+      card.appendChild(textDiv);
+      card.addEventListener("click", () => openModal(result));
+      searchResults.appendChild(card);
+    });
+
+    renderPagination();
+    window.scrollTo({ top: searchResults.offsetTop - 20, behavior: "smooth" });
+  }
+
+  /* ── PAGINATION ── */
+  function renderPagination() {
+    const totalPages = Math.ceil(currentResults.length / resultsPerPage);
+    paginationEl.innerHTML = "";
+    if (totalPages <= 1) return;
+
+    const prev = document.createElement("button");
+    prev.textContent = "‹"; prev.className = "btn btn-outline-primary btn-page";
+    prev.disabled = currentPage === 1;
+    prev.addEventListener("click", () => displayPage(currentPage - 1));
+    paginationEl.appendChild(prev);
+
+    for (let i = 1; i <= totalPages; i++) {
+      const btn = document.createElement("button");
+      btn.textContent = i;
+      btn.className = "btn btn-outline-primary btn-page" + (i === currentPage ? " active" : "");
+      btn.addEventListener("click", () => displayPage(i));
+      paginationEl.appendChild(btn);
+    }
+
+    const next = document.createElement("button");
+    next.textContent = "›"; next.className = "btn btn-outline-primary btn-page";
+    next.disabled = currentPage === totalPages;
+    next.addEventListener("click", () => displayPage(currentPage + 1));
+    paginationEl.appendChild(next);
+  }
+
+  /* ── MODAL ── */
+  function openModal(result) {
+    modalTitle.textContent = result.title;
+
+    // Show full extract in modal (up to 1000 chars)
+    const fullText = result.description.length > 1000
+      ? result.description.slice(0, 1000).trim() + "…"
+      : result.description;
+
+    modalBodyContent.innerHTML = `
+      ${result.thumbnailUrl
+        ? `<img class="modal-img" src="${result.thumbnailUrl}" alt="${result.title}">`
+        : ""}
+      <p class="modal-extract">${fullText}</p>
+      <div class="modal-actions">
+        <a href="${result.link}" target="_blank" rel="noopener">
+          <button class="btn-search" style="font-size:13px;padding:9px 20px;">↗ Read Full Article</button>
+        </a>
+        <button class="btn btn-outline-secondary"
+          style="font-size:13px;border-radius:10px;"
+          id="copyLinkBtn">🔗 Copy Link</button>
+      </div>
+    `;
+
+    document.getElementById("copyLinkBtn").addEventListener("click", () => {
+      navigator.clipboard.writeText(result.link)
+        .then(() => showToast("🔗 Link copied!"))
+        .catch(() => showToast("Could not copy link."));
+    });
+
+    modalOverlay.classList.add("open");
+    document.body.style.overflow = "hidden";
+  }
+
+  modalClose.addEventListener("click", closeModal);
+  modalOverlay.addEventListener("click", e => { if (e.target === modalOverlay) closeModal(); });
+  document.addEventListener("keydown", e => { if (e.key === "Escape") closeModal(); });
+
+  function closeModal() {
+    modalOverlay.classList.remove("open");
+    document.body.style.overflow = "";
+  }
+
+  /* ── VOICE SEARCH ── */
+  const SpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition;
+
+  if (!SpeechRecognition) {
+    micBtn.style.display = "none";
+  } else {
+    const recognition = new SpeechRecognition();
+    recognition.continuous     = false;
+    recognition.interimResults = false;
+    recognition.lang           = "en-US";
+
+    micBtn.addEventListener("click", () => {
+      if (micBtn.classList.contains("listening")) {
+        recognition.stop();
       } else {
-        // Switch to light mode
-        document.body.classList.add("light-mode");
-        toggleDarkModeBtn.textContent = "Dark Mode";
+        recognition.start();
+        micBtn.classList.add("listening");
+        showToast("🎤 Listening…");
       }
     });
 
-    function displayPage(page) {
-      currentPage = page;
-      const start = (page - 1) * resultsPerPage;
-      const end = start + resultsPerPage;
-      const resultsToDisplay = currentResults.slice(start, end);
+    recognition.onresult = event => {
+      const transcript = event.results[0][0].transcript;
+      userInput.value = transcript;
+      micBtn.classList.remove("listening");
+      showToast(`🎤 Heard: "${transcript}"`);
+      searchWikipedia();
+    };
 
-      searchResults.innerHTML = "";
-      resultsToDisplay.forEach((result) => {
-        const container = document.createElement("div");
-        container.className = "result-container";
+    recognition.onerror = () => {
+      micBtn.classList.remove("listening");
+      showToast("🎤 Voice error — please try again.");
+    };
 
-        const img = document.createElement("img");
-        img.className = "result-image";
-        img.src =
-          result.thumbnailUrl ||
-          "https://upload.wikimedia.org/wikipedia/commons/6/63/Wikipedia-logo.png";
+    recognition.onend = () => micBtn.classList.remove("listening");
+  }
 
-        const textDiv = document.createElement("div");
-        textDiv.className = "result-text";
-        textDiv.innerHTML = `<a href="${result.link}" target="_blank" class="title-result">${result.title}</a>
-                             <p class="description-result">${result.description}</p>`;
+  /* ── OFFLINE ── */
+  window.addEventListener("offline", () => showToast("📡 You're offline!"));
+  window.addEventListener("online",  () => showToast("✅ Back online!"));
 
-        container.appendChild(img);
-        container.appendChild(textDiv);
-        searchResults.appendChild(container);
-      });
-
-      renderPagination();
-    }
-
-    function renderPagination() {
-      const totalPages = Math.ceil(currentResults.length / resultsPerPage);
-      pagination.innerHTML = "";
-
-      for (let i = 1; i <= totalPages; i++) {
-        const btn = document.createElement("button");
-        btn.textContent = i;
-        btn.className = "btn btn-outline-primary btn-page";
-        if (i === currentPage) btn.classList.add("active");
-        btn.onclick = () => displayPage(i);
-        pagination.appendChild(btn);
-      }
-    }
-
-    function searchWikipedia() {
-      const query = userInput.value.trim();
-      if (!query) return alert("Please enter a search term");
-
-      fetch(`https://apis.ccbp.in/wiki-search?search=${encodeURIComponent(query)}`)
-        .then((res) => res.json())
-        .then((data) => {
-          currentResults = data.search_results.map((item) => ({
-            title: item.title,
-            link: item.link,
-            description: item.description,
-            thumbnailUrl: item.imageUrl || null,
-          }));
-
-          displayPage(1);
-          saveSearch(query);
-        })
-        .catch(() => {
-          searchResults.innerHTML =
-            '<p class="text-danger text-center">Error fetching results.</p>';
-        });
-    }
-
-    function saveSearch(query) {
-      let history = JSON.parse(localStorage.getItem("searchHistory") || "[]");
-      if (!history.includes(query)) {
-        history.unshift(query);
-        if (history.length > 5) history.pop();
-        localStorage.setItem("searchHistory", JSON.stringify(history));
-      }
-    }
-
-    clearHistoryBtn.addEventListener("click", () => {
-      localStorage.removeItem("searchHistory");
-      alert("Search history cleared.");
-    });
-
-    searchBtn.addEventListener("click", searchWikipedia);
-    userInput.addEventListener("keydown", (e) => {
-      if (e.key === "Enter") searchWikipedia();
-    });
-
-    // Voice Search Integration
-    let recognition;
-    if ("webkitSpeechRecognition" in window) {
-      recognition = new webkitSpeechRecognition();
-    } else if ("SpeechRecognition" in window) {
-      recognition = new SpeechRecognition();
-    } else {
-      recognition = null;
-      micBtn.style.display = "none"; // Hide mic button if not supported
-    }
-
-    if (recognition) {
-      recognition.continuous = false;
-      recognition.interimResults = false;
-      recognition.lang = "en-US";
-
-      micBtn.addEventListener("click", () => {
-        if (micBtn.classList.contains("listening")) {
-          recognition.stop();
-          micBtn.classList.remove("listening");
-        } else {
-          recognition.start();
-          micBtn.classList.add("listening");
-        }
-      });
-
-      recognition.onresult = (event) => {
-        const transcript = event.results[0][0].transcript;
-        userInput.value = transcript;
-        micBtn.classList.remove("listening");
-        searchWikipedia();
-      };
-
-      recognition.onerror = (event) => {
-        console.error("Speech recognition error", event.error);
-        micBtn.classList.remove("listening");
-        alert("Voice recognition error, please try again.");
-      };
-
-      recognition.onend = () => {
-        micBtn.classList.remove("listening");
-      };
-    }
-
-    window.addEventListener("offline", () => {
-      alert("You're offline. Please check your connection.");
-    });
-  </script>
+  /* ── INIT ── */
+  loadHistory();
+  userInput.focus();
+</script>
 </body>
 </html>
